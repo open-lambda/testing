@@ -12,15 +12,16 @@ apt -y install curl
 apt -y install git
 apt -y install docker.io
 apt -y install cgroup-tools cgroup-bin
-apt -y install python-pip
 apt -y install python2.7-dev
+apt -y install python-pip
+apt -y install python3-pip
+service docker restart
 
 # python
 pip install netifaces
 pip install rethinkdb
 pip install tornado
-
-service docker restart
+pip3 install boto3
 
 # go
 wget -q -O /tmp/go1.7.6.tar.gz https://storage.googleapis.com/golang/go1.7.6.linux-amd64.tar.gz

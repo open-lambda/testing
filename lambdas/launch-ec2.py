@@ -13,19 +13,18 @@ def main(event, context):
     prev = ec2.describe_instances()
     if len(prev) > 10:
         return prev
-    
-    # get latest test config
+
+    # fetch VM image ID, and the script we will want to run on that VM
     r = requests.get("https://raw.githubusercontent.com/open-lambda/testing/master/dev/ami.txt")
     r.raise_for_status()
     ami = r.text
-    
-    startup = """
-#!/bin/bash
-curl https://raw.githubusercontent.com/open-lambda/testing/master/dev-deploy/test.py -o test.py
-python3 test.py
-    """
 
-    # TODO: grab ImageId from github; grab test.py from github
+    r = requests.get("https://raw.githubusercontent.com/open-lambda/testing/master/tests/ec2-test.py")
+    r.raise_for_status()
+    script = r.text
+
+    # launch one VM to do the testing.  When it is done, the VM will
+    # upload results to S3 and self-destruct.
     ec2.run_instances(ImageId=ami,
                       MinCount=1, MaxCount=1,
                       InstanceType="t2.micro",
@@ -33,13 +32,9 @@ python3 test.py
                       KeyName="id_rsa",
                       InstanceInitiatedShutdownBehavior='terminate',
                       TagSpecifications=[{"ResourceType": "instance", "Tags":[{"Key":"ol", "Value":"ol-test-vm"}]}],
-                      UserData=startup.strip())
-    
-    now = datetime.datetime.today().strftime("%Y-%m-%d-%H-%M-%S")
-    dirname = 'lambda/%s' % now
-    s3.put_object(Bucket="open-lambda-public", Key=dirname+"/executed")
-    
+                      UserData=script)
+
     return {
         'statusCode': 200,
-        'body': json.dumps('Hello from Lambda 3!')
+        'body': json.dumps('Yay, launched the VM!')
     }

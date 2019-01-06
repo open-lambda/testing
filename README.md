@@ -22,10 +22,49 @@ vagrant box add aws-dummy https://github.com/mitchellh/vagrant-aws/raw/master/du
 You can then build the image as follows:
 
 ```
-cd dev
+cd dev-build
 python build-ami.py
 ```
 
 Note that this script requires AWS permissions as well github push
 permissions for this repo.  The build takes about 10 minutes, and will
 automatically update ami.txt and push it.
+
+## Spinning Up a Dev VM
+
+You'll need the same vagrant plugins mentioned in the above section.
+Then do the following:
+
+```
+cd dev-deploy
+vagrant up
+vagrant ssh
+```
+
+## Lambda Config
+
+The code for the lambda that launches the EC2 test VM is located at
+`lambdas/launch-ec2.py`.  The new VM will run the code in
+`tests/ec2-test.py`.
+
+Upload `launch-ec2.py` as a new lambda function, with whatever
+triggers are appropriate.  The entry function is main.
+
+You'll need to do some permission config for the lambda: * give the
+lambda has permission to launch EC2 instances * give the lambda has
+permission to pass a role to new EC2 instances so they can write to S3
+
+The lambda uses the `requests` module, which is not deployed with
+Python.  You'll need to create a lambda layer with this installed.
+You can do so with the following steps:
+
+```
+python3 -m venv lambda-base
+source ./lambda-base/bin/activate
+pip install requests
+aws lambda publish-layer-version --layer-name lambda-base --zip-file fileb://lambda-base.zip 
+```
+
+Configure the function to use this layer, and add
+`PYTHONPATH=/opt/lib/python3.6/site-packages` to the environment
+variables for the function.

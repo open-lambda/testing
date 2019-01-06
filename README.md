@@ -41,6 +41,16 @@ vagrant up
 vagrant ssh
 ```
 
+The pull, build, and test:
+
+```
+sudo su
+git clone https://github.com/open-lambda/open-lambda.git
+cd open-lambda
+make
+make test
+```
+
 ## Lambda Config
 
 The code for the lambda that launches the EC2 test VM is located at

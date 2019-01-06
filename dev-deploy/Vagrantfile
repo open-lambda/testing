@@ -14,8 +14,7 @@ Vagrant.configure('2') do |config|
     aws.instance_type = 't2.micro'
     aws.keypair_name = 'id_rsa'
     aws.security_groups = ['default']
-    aws.ami = `cat ../dev/ami.txt`
-    aws.iam_instance_profile_name = 'ol-dev-vm'
+    aws.ami = `cat ../dev-build/ami.txt`
 
     override.ssh.username = 'ubuntu'
     override.ssh.private_key_path = '~/.ssh/id_rsa'

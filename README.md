@@ -3,7 +3,7 @@
 In order to facilitate testing and the creation of dev VMs, we
 maintain an AWS VM image for quickly provisioning a VM with all the
 build prereqs installed.  The AMI for the current image will be
-[here](https://raw.githubusercontent.com/open-lambda/testing/master/dev/ami.txt).
+[here](https://raw.githubusercontent.com/open-lambda/testing/master/dev-build/ami.txt).
 The image can be used to create a t2.micro instance in the US-EAST-2
 region.
 

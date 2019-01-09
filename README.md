@@ -1,3 +1,9 @@
+# Test Summary
+
+Daily OpenLambda tests will be uploaded here:
+
+[https://s3.us-east-2.amazonaws.com/open-lambda-public/tests.html](https://s3.us-east-2.amazonaws.com/open-lambda-public/tests.html)
+
 # Development VM
 
 In order to facilitate testing and the creation of dev VMs, we

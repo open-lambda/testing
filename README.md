@@ -68,9 +68,9 @@ The code for the lambda that launches the EC2 test VM is located at
 Upload `launch-ec2.py` as a new lambda function, with whatever
 triggers are appropriate.  The entry function is main.
 
-You'll need to do some permission config for the lambda: * give the
-lambda has permission to launch EC2 instances * give the lambda has
-permission to pass a role to new EC2 instances so they can write to S3
+You'll need to do some permission config for the lambda:
+* give the lambda has permission to launch EC2 instances
+* give the lambda has permission to pass a role to new EC2 instances so they can write to S3
 
 The lambda uses the `requests` module, which is not deployed with
 Python.  You'll need to create a lambda layer with this installed.

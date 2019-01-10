@@ -100,13 +100,15 @@ def gen_report():
     html += ['<html>', '<body>']
 
     for vm in vms:
+        commit = s3_get('vm/%s/commit.txt'%vm, 'unkown')
         result = s3_get('vm/%s/test.txt'%vm, 'unkown')
-        html += ['<h3>%s</h3>' % vm]
+
+        html += ['<h3>%s [COMMIT: %s]</h3>' % (vm, commit)]
         html += ['<ul>']
         html += ['<li>Result: <b>'+result+'</b>']
-        html += ['<li>Commit: '+href('vm/%s/commit.txt'%vm)]
         html += ['<li>Cloud Log: '+href('vm/%s/cloud-init-output.log'%vm)]
         html += ['<li>Test Log: '+href('vm/%s/tests.out'%vm)]
+        html += ['<li>Worker Log: '+href('vm/%s/worker-0.out'%vm)]
         html += ['</ul>']
 
     html += ['</body>', '</html>']

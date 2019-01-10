@@ -99,6 +99,7 @@ def gen_report():
         html += ['<h3>%s</h3>' % vm]
         html += ['<ul>']
         html += ['<li>Result: <b>'+result+'</b>']
+        html += ['<li>Commit: '+href('vm/%s/commit.txt'%vm)]
         html += ['<li>Cloud Log: '+href('vm/%s/cloud-init-output.log'%vm)]
         html += ['<li>Test Log: '+href('vm/%s/tests.out'%vm)]
         html += ['</ul>']

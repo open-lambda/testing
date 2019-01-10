@@ -58,7 +58,7 @@ def run_all():
     os.chdir(expanduser("~"))
     run('git clone --depth=1 https://github.com/open-lambda/open-lambda.git')
     os.chdir(expanduser("open-lambda"))
-    git_commit = check_output('git rev-parse HEAD', shell=True)
+    git_commit = str(check_output('git rev-parse HEAD', shell=True))
     s3_put(dirname+'/commit.txt', git_commit)
 
     run('make')

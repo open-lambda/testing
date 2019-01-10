@@ -51,11 +51,14 @@ def run_all():
     now = datetime.datetime.today().strftime("%Y-%m-%d-%H-%M-%S")
     dirname = 'vm/%s' % now
 
-    # upload AWS log to S3
+    # upload AWS log and git info to S3
     s3_put(dirname+'/cloud-init-output.log', aws_log())
+    git_commit = check_output('git rev-parse HEAD', shell=True)
+    s3_put(dirname+'/commit.txt', git_commit)
 
+    # pull/build/test
     os.chdir(expanduser("~"))
-    run('git clone https://github.com/open-lambda/open-lambda.git')
+    run('git clone --depth=1 https://github.com/open-lambda/open-lambda.git')
     os.chdir(expanduser("open-lambda"))
     run('make')
     try:

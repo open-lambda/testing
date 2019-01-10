@@ -6,6 +6,9 @@ export DEBIAN_FRONTEND=noninteractive
 
 apt -y install emacs-nox
 
+git config --global user.name "Tyler Caraza-Harter"
+git config --global user.email tylerharter@gmail.com
+
 cd ~
 git clone https://github.com/tylerharter/tools.git
 

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 import os, sys, time, datetime, boto3
 from subprocess import check_call, check_output
-from os.path import expanduser
+from os.path import expanduser, exists
 
 BUCKET = 'open-lambda-public'
 URL = 'https://s3.us-east-2.amazonaws.com/open-lambda-public/'
@@ -58,7 +58,7 @@ def run_all():
     os.chdir(expanduser("~"))
     run('git clone --depth=1 https://github.com/open-lambda/open-lambda.git')
     os.chdir(expanduser("open-lambda"))
-    git_commit = str(check_output('git rev-parse HEAD', shell=True))
+    git_commit = check_output('git rev-parse HEAD', shell=True).decode('utf-8')
     s3_put(dirname+'/commit.txt', git_commit)
 
     run('make')
@@ -69,10 +69,14 @@ def run_all():
     except:
         result = 'FAIL'
 
-    # upload test results to S3
+    # upload test results/logs to S3
     s3_put(dirname+'/test.txt', result)
     with open('tests.out') as f:
         s3_put(dirname+'/tests.out', f.read())
+
+    if exists('testing/test-cluster/logs/worker-0.out'):
+        with open("testing/test-cluster/logs/worker-0.out") as f:
+            s3_put(dirname+'/worker-0.out', f.read())
 
     # refresh summary
     gen_report()

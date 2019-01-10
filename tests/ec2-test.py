@@ -58,7 +58,7 @@ def run_all():
     os.chdir(expanduser("~"))
     run('git clone --depth=1 https://github.com/open-lambda/open-lambda.git')
     os.chdir(expanduser("open-lambda"))
-    git_commit = check_output('git rev-parse HEAD', shell=True).decode('utf-8')
+    git_commit = check_output('git rev-parse HEAD', shell=True).decode('utf-8').strip()
     s3_put(dirname+'/commit.txt', git_commit)
 
     run('make')
@@ -100,8 +100,8 @@ def gen_report():
     html += ['<html>', '<body>']
 
     for vm in vms:
-        commit = s3_get('vm/%s/commit.txt'%vm, 'unkown')
-        result = s3_get('vm/%s/test.txt'%vm, 'unkown')
+        commit = s3_get('vm/%s/commit.txt'%vm, 'unkown').strip()
+        result = s3_get('vm/%s/test.txt'%vm, 'unkown').strip()
 
         html += ['<h3>%s [COMMIT: %s]</h3>' % (vm, commit)]
         html += ['<ul>']

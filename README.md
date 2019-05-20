@@ -49,14 +49,14 @@ vagrant up
 vagrant ssh
 ```
 
-The pull, build, and test:
+Then pull, build, and test:
 
 ```
 sudo su
 git clone https://github.com/open-lambda/open-lambda.git
 cd open-lambda
 make
-make test
+make test-all
 ```
 
 ## Lambda Config
@@ -79,6 +79,7 @@ You can do so with the following steps:
 ```
 python3 -m venv lambda-base
 source ./lambda-base/bin/activate
+zip -r lambda-base.zip lambda-base
 pip install requests
 aws lambda publish-layer-version --layer-name lambda-base --zip-file fileb://lambda-base.zip 
 ```

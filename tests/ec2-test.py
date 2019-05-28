@@ -61,18 +61,28 @@ def run_all():
     git_commit = check_output('git rev-parse HEAD', shell=True).decode('utf-8').strip()
     s3_put(dirname+'/commit.txt', git_commit)
 
-    run('make')
     try:
-        with open("tests.out", "w") as f:
-            check_call("make test-all", shell=True, stdout=f, stderr=f)
-        result = 'PASS'
+        with open("build.out", "w") as f:
+            check_call("make", shell=True, stdout=f, stderr=f)
+        try:
+            with open("tests.out", "w") as f:
+                check_call("make test-all", shell=True, stdout=f, stderr=f)
+                result = 'PASS'
+        except:
+            result = 'FAIL'
     except:
-        result = 'FAIL'
+        result = 'BUILD-FAIL'
 
     # upload test results/logs to S3
     s3_put(dirname+'/test.txt', result)
-    with open('tests.out') as f:
-        s3_put(dirname+'/tests.out', f.read())
+
+    if exists('build.out'):
+        with open('build.out') as f:
+            s3_put(dirname+'/build.out', f.read())
+    
+    if exists('tests.out'):
+        with open('tests.out') as f:
+            s3_put(dirname+'/tests.out', f.read())
 
     if exists('testing/test-cluster/logs/worker-0.out'):
         with open("testing/test-cluster/logs/worker-0.out") as f:
@@ -107,6 +117,7 @@ def gen_report():
         html += ['<ul>']
         html += ['<li>Result: <b>'+result+'</b>']
         html += ['<li>Cloud Log: '+href('vm/%s/cloud-init-output.log'%vm)]
+        html += ['<li>Build Log: '+href('vm/%s/build.out'%vm)]
         html += ['<li>Test Log: '+href('vm/%s/tests.out'%vm)]
         html += ['<li>Worker Log: '+href('vm/%s/worker-0.out'%vm)]
         html += ['</ul>']

@@ -31,7 +31,7 @@ You can then build the image as follows:
 
 ```
 cd dev-build
-python build-ami.py
+python3 build-ami.py
 ```
 
 Note that this script requires AWS permissions as well github push

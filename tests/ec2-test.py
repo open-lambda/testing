@@ -54,8 +54,11 @@ def run_all():
     # upload AWS log to S3
     s3_put(dirname+'/cloud-init-output.log', aws_log())
 
-    # pull/build/test
+    # move to user dir
     os.chdir(expanduser("~"))
+    os.environ["HOME"] = expanduser("~") # why do we need to do this ourselves?
+
+    # pull/build/test
     run('git clone --depth=1 https://github.com/open-lambda/open-lambda.git')
     os.chdir(expanduser("open-lambda"))
     git_commit = check_output('git rev-parse HEAD', shell=True).decode('utf-8').strip()

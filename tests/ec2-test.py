@@ -109,9 +109,14 @@ def gen_report():
     html = []
     html += ['<html>', '<body>']
 
-    for vm in vms:
-        commit = s3_get('vm/%s/commit.txt'%vm, 'unkown').strip()
-        result = s3_get('vm/%s/test.txt'%vm, 'unkown').strip()
+    for i, vm in enumerate(vms):
+        if i < 14:
+            commit = s3_get('vm/%s/commit.txt'%vm, 'unkown').strip()
+            result = s3_get('vm/%s/test.txt'%vm, 'unkown').strip()
+        else:
+            # just so we can complete faster without doing too many S3 reads
+            commit = '???'
+            result = '???'
 
         html += ['<h3>%s [COMMIT: %s]</h3>' % (vm, commit)]
         html += ['<ul>']

@@ -82,10 +82,14 @@ def run_all():
     if exists('build.out'):
         with open('build.out') as f:
             s3_put(dirname+'/build.out', f.read())
-    
+
     if exists('tests.out'):
         with open('tests.out') as f:
             s3_put(dirname+'/tests.out', f.read())
+
+    if exists('test.json'):
+        with open('test.json') as f:
+            s3_put(dirname+'/test.json', f.read())
 
     if exists('testing/test-cluster/logs/worker-0.out'):
         with open("testing/test-cluster/logs/worker-0.out") as f:
@@ -127,7 +131,7 @@ def gen_report():
         html += ['<li>Cloud Log: '+href('vm/%s/cloud-init-output.log'%vm)]
         html += ['<li>Build Log: '+href('vm/%s/build.out'%vm)]
         html += ['<li>Test Log: '+href('vm/%s/tests.out'%vm)]
-        html += ['<li>Worker Log: '+href('vm/%s/worker-0.out'%vm)]
+        html += ['<li>Test Results: '+href('vm/%s/test.json'%vm)]
         html += ['</ul>']
 
     html += ['</body>', '</html>']

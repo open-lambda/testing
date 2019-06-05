@@ -6,6 +6,7 @@ from os.path import expanduser, exists
 BUCKET = 'open-lambda-public'
 URL = 'https://s3.us-east-2.amazonaws.com/open-lambda-public/'
 s3 = boto3.client("s3")
+DATA = {}
 
 
 def run(cmd):
@@ -59,16 +60,24 @@ def run_all():
     os.environ["HOME"] = expanduser("~") # why do we need to do this ourselves?
 
     # pull/build/test
-    run('git clone --depth=1 https://github.com/open-lambda/open-lambda.git')
-    os.chdir(expanduser("open-lambda"))
+    if not "commit" in DATA:
+        run('git clone --depth=1 https://github.com/open-lambda/open-lambda.git')
+    else:
+        run(' && '.join([
+            'git clone https://github.com/open-lambda/open-lambda.git',
+            'cd open-lambda',
+            'git checkout ' + DATA["commit"]
+        ]))
+
+    os.chdir("open-lambda")
     git_commit = check_output('git rev-parse HEAD', shell=True).decode('utf-8').strip()
     s3_put(dirname+'/commit.txt', git_commit)
 
     try:
-        with open("build.out", "w") as f:
+        with open("build.out", "w", buffering=0) as f:
             check_call("make", shell=True, stdout=f, stderr=f)
         try:
-            with open("tests.out", "w") as f:
+            with open("tests.out", "w", buffering=0) as f:
                 check_call("make test-all", shell=True, stdout=f, stderr=f)
                 result = 'PASS'
         except:

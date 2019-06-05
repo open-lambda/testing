@@ -3,6 +3,14 @@ import os, sys, time, datetime, boto3
 from subprocess import check_call, check_output
 from os.path import expanduser, exists
 
+with open(__file__) as f:
+    print("SOURCE:")
+    print("="*40)
+    print(f.read())
+    print("="*40)
+    sys.out.flush()
+
+
 BUCKET = 'open-lambda-public'
 URL = 'https://s3.us-east-2.amazonaws.com/open-lambda-public/'
 s3 = boto3.client("s3")

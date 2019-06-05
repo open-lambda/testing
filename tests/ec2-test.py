@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-import os, sys, time, datetime, boto3
+import os, sys, time, datetime, boto3, traceback
 from subprocess import check_call, check_output
 from os.path import expanduser, exists
 
@@ -18,6 +18,7 @@ DATA = {}
 
 
 def run(cmd):
+    print("RUN "+cmd)
     check_call(cmd, shell=True, stdout=sys.stdout, stderr=sys.stderr)
 
 
@@ -27,6 +28,7 @@ def aws_log():
 
 
 def s3_put(key, value, content_type='text/plain'):
+    print("S3 PUT "+key)
     r = s3.put_object(Bucket=BUCKET,
                       Key=key,
                       Body=value.encode('utf-8'),
@@ -60,7 +62,7 @@ def run_all():
     now = datetime.datetime.today().strftime("%Y-%m-%d-%H-%M-%S")
     dirname = 'vm/%s' % now
 
-    # upload AWS log to S3
+    # upload AWS log to S3 (we'll do again later to capture prints after this)
     s3_put(dirname+'/cloud-init-output.log', aws_log())
 
     # move to user dir
@@ -82,15 +84,17 @@ def run_all():
     s3_put(dirname+'/commit.txt', git_commit)
 
     try:
-        with open("build.out", "w", buffering=0) as f:
+        with open("build.out", "w") as f:
             check_call("make", shell=True, stdout=f, stderr=f)
         try:
-            with open("tests.out", "w", buffering=0) as f:
+            with open("tests.out", "w") as f:
                 check_call("make test-all", shell=True, stdout=f, stderr=f)
                 result = 'PASS'
-        except:
+        except Exception:
+            print(traceback.format_exc())
             result = 'FAIL'
-    except:
+    except Exception:
+        print(traceback.format_exc())
         result = 'BUILD-FAIL'
 
     # upload test results/logs to S3
@@ -115,6 +119,8 @@ def run_all():
     # refresh summary
     gen_report()
 
+    s3_put(dirname+'/cloud-init-output.log', aws_log())
+
     # kill the VM (it has been configured to terminate on shutdown)
     run('poweroff -f')
 
@@ -127,6 +133,8 @@ def href(s3_path, all_keys):
 
 
 def gen_report():
+    print("GEN REPORT")
+
     vms = set()
     all_keys = s3_all_keys("vm")
     for k in all_keys:

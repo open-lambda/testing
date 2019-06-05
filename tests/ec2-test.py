@@ -8,7 +8,7 @@ with open(__file__) as f:
     print("="*40)
     print(f.read())
     print("="*40)
-    sys.out.flush()
+    sys.stdout.flush()
 
 
 BUCKET = 'open-lambda-public'
@@ -119,14 +119,17 @@ def run_all():
     run('poweroff -f')
 
 
-def href(s3_path):
+def href(s3_path, all_keys):
+    if not s3_path in all_keys:
+        return '[NOT FOUND]'
     url = URL + s3_path
-    return '<a href="{url}">{url}</a>'.format(url=url)
+    return '<a href="{url}">{text}</a>'.format(url=url, text=url.split("/")[-1])
 
 
 def gen_report():
     vms = set()
-    for k in s3_all_keys("vm"):
+    all_keys = s3_all_keys("vm")
+    for k in all_keys:
         vms.add(k.split('/')[1])
     vms = sorted(vms, reverse=True)
 
@@ -145,10 +148,12 @@ def gen_report():
         html += ['<h3>%s [COMMIT: %s]</h3>' % (vm, commit)]
         html += ['<ul>']
         html += ['<li>Result: <b>'+result+'</b>']
-        html += ['<li>Cloud Log: '+href('vm/%s/cloud-init-output.log'%vm)]
-        html += ['<li>Build Log: '+href('vm/%s/build.out'%vm)]
-        html += ['<li>Test Log: '+href('vm/%s/tests.out'%vm)]
-        html += ['<li>Test Results: '+href('vm/%s/test.json'%vm)]
+        html += ['<li>Commit: '+href('vm/%s/commit.txt'%vm, all_keys)]
+        html += ['<li>Cloud Log: '+href('vm/%s/cloud-init-output.log'%vm, all_keys)]
+        html += ['<li>Build Log: '+href('vm/%s/build.out'%vm, all_keys)]
+        html += ['<li>Test Log: '+href('vm/%s/tests.out'%vm, all_keys)]
+        html += ['<li>Test Results: '+href('vm/%s/test.json'%vm, all_keys)]
+        html += ['<li>Test Status: '+href('vm/%s/test.txt'%vm, all_keys)]
         html += ['</ul>']
 
     html += ['</body>', '</html>']

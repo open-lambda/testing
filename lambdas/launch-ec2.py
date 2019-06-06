@@ -23,6 +23,8 @@ def main(event, context):
     r.raise_for_status()
     script = r.text
 
+    script = script.replace("DATA = {}", "DATA = " + repr(event))
+
     # launch one VM to do the testing.  When it is done, the VM will
     # upload results to S3 and self-destruct.
     ec2.run_instances(ImageId=ami,

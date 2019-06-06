@@ -122,7 +122,8 @@ def run_all():
     s3_put(dirname+'/cloud-init-output.log', aws_log())
 
     # kill the VM (it has been configured to terminate on shutdown)
-    run('poweroff -f')
+    if DATA.get("terminate", True):
+        run('poweroff -f')
 
 
 def href(s3_path, all_keys):

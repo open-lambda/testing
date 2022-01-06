@@ -7,13 +7,8 @@ export DEBIAN_FRONTEND=noninteractive
 # ubuntu
 apt -y install linux-modules-extra-$(uname -r)
 apt -y install linux-image-extra-virtual
-apt -y install curl
-apt -y install git
-apt -y install docker.io
-apt -y install cgroup-tools cgroup-bin
-apt -y install python2.7-dev
-apt -y install python-pip
-apt -y install python3-pip
+apt -y install curl git docker.io cgroup-tools cgroup-bin emacs24-nox htop sysstat
+apt -y install python2.7-dev python-pip python3-pip
 service docker restart
 
 # python (2+3)

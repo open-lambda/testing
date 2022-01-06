@@ -8,6 +8,10 @@ def main(event, context):
     prev = ec2.describe_instances(Filters=[{"Name":"tag:ol" ,"Values":["ol-test-vm"]},
                                            {"Name":"instance-state-name", "Values":["running", "pending"]}])
     if len(prev["Reservations"]) > 0:
+        for res in prev["Reservations"]:
+            for inst in res["Instances"]:
+                print(f"kill {inst['InstanceId']}")
+                ec2.terminate_instances(InstanceIds=[inst["InstanceId"]])
         return str(prev)
         
     prev = ec2.describe_instances()

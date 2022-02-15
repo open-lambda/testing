@@ -21,7 +21,7 @@ def main(event, context):
     # fetch VM image ID, and the script we will want to run on that VM
     r = requests.get("https://raw.githubusercontent.com/open-lambda/testing/master/dev-build/ami.txt")
     r.raise_for_status()
-    ami = r.text
+    ami = r.text.strip()
 
     r = requests.get("https://raw.githubusercontent.com/open-lambda/testing/master/tests/ec2-test.py")
     r.raise_for_status()

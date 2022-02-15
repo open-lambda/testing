@@ -81,8 +81,8 @@ def main():
 
     pip3 install boto3
 
-    wget -q -O /tmp/go1.12.5.linux-amd64.tar.gz https://dl.google.com/go/go1.12.5.linux-amd64.tar.gz
-    tar -C /usr/local -xzf /tmp/go1.12.5.linux-amd64.tar.gz
+    wget -q -O /tmp/go1.17.6.linux-amd64.tar.gz https://dl.google.com/go/go1.17.6.linux-amd64.tar.gz
+    tar -C /usr/local -xzf /tmp/go1.17.6.linux-amd64.tar.gz
     ln -s /usr/local/go/bin/go /usr/bin/go
     """
 
@@ -101,6 +101,9 @@ def main():
     # make AMI public
     ec2.modify_image_attribute(ImageId=res["ImageId"],
                                LaunchPermission={'Add': [{'Group': 'all'}]})
+
+    with open("ami.txt", "w") as f:
+        f.write(res["ImageId"].strip())
 
     # share AMI to github
     run('git add ami.txt')
